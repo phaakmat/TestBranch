@@ -36,12 +36,12 @@ stages:
     jobs:
       - ${{ each dotnet in parameters.dotnetVersions }}:
         - ${{ each datadog in parameters.datadogVersions }}:
-          - job: Build_${{ replace(dotnet, '.', '_') }}_0_${{ replace(datadog, '.', '_') }}
+          - job: Build_${{ replace(iif(contains(dotnet, '.'), dotnet, format('{0}.0', dotnet)), '.', '_') }}_0_${{ replace(datadog, '.', '_') }}
             variables:
               dotnetVersion: ${{ iif(contains(dotnet, '.'), dotnet, format('{0}.0', dotnet)) }}
               ddtraceVersion: ${{ datadog }}
               tag: "${{ dotnet }}.0-${{ datadog }}"
-            displayName: "Build and push with tag $[variables.dotnetVersion]-${{ datadog }}"
+            displayName: "Build and push with tag ${{ iif(contains(dotnet, '.'), dotnet, format('{0}.0', dotnet)) }}-${{ datadog }}"
             steps:
               - script: |
                   echo "Tag: $(tag), dotnetVersion: $(dotnetVersion), ddtraceVersion: $(ddtraceVersion)"
