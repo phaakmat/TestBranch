@@ -37,7 +37,7 @@ stages:
       - ${{ each dotnet in parameters.dotnetVersions }}:
         - ${{ each datadog in parameters.datadogVersions }}:
           - job: Build_${{ replace(dotnet, '.', '_') }}_0_${{ replace(datadog, '.', '_') }}
-            displayName: "Build and push with tag ${{ dotnet }}.0-${{ datadog }}"
+            displayName: "Build and push with tag ${{ variables.dotnetVersion }}.0-${{ datadog }}"
             variables:
               dotnetVersion: ${{ iif(contains(dotnet, '.'), dotnet, format('{0}.0', dotnet)) }}
               ddtraceVersion: ${{ datadog }}
