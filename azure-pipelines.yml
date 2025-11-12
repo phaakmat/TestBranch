@@ -40,7 +40,7 @@ stages:
             variables:
               dotnetVersion: ${{ iif(contains(dotnet, '.'), dotnet, format('{0}.0', dotnet)) }}
               ddtraceVersion: ${{ datadog }}
-              tag: "${{ dotnet }}.0-${{ datadog }}"
+              tag: "${{ iif(contains(dotnet, '.'), dotnet, format('{0}.0', dotnet)) }}.0-${{ datadog }}"
             displayName: "Build and push with tag ${{ iif(contains(dotnet, '.'), dotnet, format('{0}.0', dotnet)) }}-${{ datadog }}"
             steps:
               - script: |
