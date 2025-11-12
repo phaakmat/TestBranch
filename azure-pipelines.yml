@@ -1,0 +1,47 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+parameters:
+  - name: dotnetVersions
+    type: object
+    default:
+      - "6.0"
+      - "7.0"
+      - "8.0"
+      - "9.0"
+
+  - name: datadogVersions
+    type: object
+    default:
+      - "2.1.1"
+      - "2.13.0"
+      - "2.24.1"
+      - "2.30.0"
+      - "2.35.0"
+      - "2.41.0"
+      - "2.44.0"
+      - "3.22.0"
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: Build
+    displayName: Build image funda-aspnet
+    pool: SelfHostedLinuxTransit
+    jobs:
+      - ${{ each dotnet in parameters.dotnetVersions }}:
+        - ${{ each datadog in parameters.datadogVersions }}:
+          - job: Build_${{ replace(dotnet, '.', '_') }}_0_${{ replace(datadog, '.', '_') }}
+            displayName: Build and push with tag ${{ dotnet }}.0-${{ datadog }}
+            variables:
+              dotnetVersion: ${{ iif(contains(dotnet, '.'), dotnet, format("{0}.0", dotnet)) }}
+              ddtraceVersion: ${{ datadog }}
+              tag: "${{ dotnet }}.0-${{ datadog }}"
+            steps:
+              - script: |
+                  echo "Tag: $(tag), dotnetVersion: $(dotnetVersion), ddtraceVersion: $(ddtraceVersion)"
